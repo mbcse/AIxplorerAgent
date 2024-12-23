@@ -47,7 +47,7 @@ const BlockchainExplorer = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50">
         {/* Left Panel - Transaction History */}
-        <div className="w-1/2 p-6 overflow-y-auto border-r">
+        <div className="w-1/3 p-6 overflow-y-auto border-r">
           <div className="space-y-4">
             {messages.filter(m => m.role === 'user').map((message, index) => (
               <div key={message.id} 
@@ -59,7 +59,7 @@ const BlockchainExplorer = () => {
                   </div>
                   <span className="font-medium text-gray-700">Transaction Query #{messages.filter(m => m.role === 'user').length - index}</span>
                 </div>
-                <div className="text-gray-700 ml-11">
+                <div className="text-gray-700 ml-11 break-words">
                   {message.content}
                 </div>
               </div>
@@ -68,7 +68,7 @@ const BlockchainExplorer = () => {
         </div>
 
         {/* Right Panel - Analysis Results */}
-        <div className="w-1/2 p-6 overflow-y-auto bg-gray-50">
+        <div className="w-2/3 p-6 overflow-y-auto bg-gray-50">
           {!latestAssistantMessage ? (
             <div className="h-full flex items-center justify-center">
               <div className="text-center p-8 max-w-md">

@@ -219,7 +219,7 @@ export async function POST(request: NextRequest) {
           execute: async ({ txHash, chainId }) => {
             try {
               const analysis = await analyzeTransaction(txHash, chainId);
-              console.log(analysis);
+              // console.log(analysis);
               const serializedAnalysis = serializeBigInts(analysis);
               return {
                 success: true,

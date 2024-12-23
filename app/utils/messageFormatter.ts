@@ -19,6 +19,36 @@ export const formatList = (content: string): string => {
     .join('');
 };
 
+const formatTokenTransfers = (content: string): string => {
+  if (!content) return '';
+  
+  // Split content into groups (each token transfer is a group of related lines)
+  const transfers = content.split('\n\n').map(group => group.trim()).filter(group => group);
+  
+  return transfers.map(transfer => {
+    const lines = transfer.split('\n')
+      .map(line => line.trim())
+      .filter(line => line);
+    
+    return `
+      <div class="bg-white/90 border border-green-200 p-4 mb-3 rounded-lg hover:shadow-md transition-all duration-300">
+        ${lines.map(line => {
+          const [key, value] = line.split(':').map(part => part.trim());
+          if (!value) {
+            return `<div class="text-gray-700 py-1">${key}</div>`;
+          }
+          return `
+            <div class="flex items-start py-1.5 border-b border-gray-100 last:border-0">
+              <span class="text-gray-500 font-medium min-w-[100px]">${key}:</span>
+              <span class="text-gray-700 ml-2">${value}</span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }).join('');
+};
+
 export const formatTransferSection = (content: string): string => {
   if (!content) return '<div class="text-gray-500 text-center italic p-4">No transfers detected</div>';
   
@@ -26,31 +56,33 @@ export const formatTransferSection = (content: string): string => {
   let html = '';
   
   parts.forEach(part => {
-    if (part.includes('Native Currency:')) {
+    const trimmedPart = part.trim();
+    
+    if (trimmedPart.includes('Native Currency:')) {
       html += `<div class="bg-gradient-to-r from-blue-50 to-blue-100/50 backdrop-blur-sm border-l-4 border-blue-500 p-4 mb-4 rounded-xl hover:shadow-lg transition-all duration-300">
         <h4 class="flex items-center text-base font-medium text-gray-900 mb-3">
           <span class="mr-2">💰</span>
           <span>Native Currency Transfer</span>
         </h4>
-        ${formatList(part.replace('Native Currency:', '').trim())}
+        ${formatList(trimmedPart.replace('Native Currency:', '').trim())}
       </div>`;
     }
-    else if (part.includes('Token Transfers (ERC20):')) {
+    else if (trimmedPart.includes('Token Transfers (ERC20):')) {
       html += `<div class="bg-gradient-to-r from-green-50 to-green-100/50 backdrop-blur-sm border-l-4 border-green-500 p-4 mb-4 rounded-xl hover:shadow-lg transition-all duration-300">
         <h4 class="flex items-center text-base font-medium text-gray-900 mb-3">
           <span class="mr-2">🪙</span>
           <span>Token Transfers</span>
         </h4>
-        ${formatList(part.replace('Token Transfers (ERC20):', '').trim())}
+        ${formatTokenTransfers(trimmedPart.replace('Token Transfers (ERC20):', '').trim())}
       </div>`;
     }
-    else if (part.includes('NFT Transfers')) {
+    else if (trimmedPart.includes('NFT Transfers')) {
       html += `<div class="bg-gradient-to-r from-pink-50 to-pink-100/50 backdrop-blur-sm border-l-4 border-pink-500 p-4 mb-4 rounded-xl hover:shadow-lg transition-all duration-300">
         <h4 class="flex items-center text-base font-medium text-gray-900 mb-3">
           <span class="mr-2">🖼️</span>
           <span>NFT Transfers</span>
         </h4>
-        ${formatList(part.replace('NFT Transfers (ERC721/ERC1155):', '').trim())}
+        ${formatTokenTransfers(trimmedPart.replace('NFT Transfers (ERC721/ERC1155):', '').trim())}
       </div>`;
     }
   });
@@ -65,83 +97,84 @@ export const formatAssistantMessage = (content: string): string => {
   let formattedContent = '';
   
   sections.forEach(section => {
-    if (section.includes('TRANSACTION OVERVIEW:')) {
+    const trimmedSection = section.trim();
+    
+    if (trimmedSection.includes('TRANSACTION OVERVIEW:')) {
       formattedContent += `<div class="bg-white/80 backdrop-blur-sm border border-indigo-100 rounded-2xl p-6 mb-4 hover:shadow-xl transition-all duration-300">
         <h3 class="flex items-center text-lg font-semibold text-gray-900 mb-4">
           <span class="mr-3 bg-indigo-100 p-2 rounded-xl">🔍</span>
           <span>Transaction Overview</span>
-          ${extractComplexityBadge(section)}
+          ${extractComplexityBadge(trimmedSection)}
         </h3>
-        ${formatList(section.replace('TRANSACTION OVERVIEW:', '').trim())}
+        ${formatList(trimmedSection.replace('TRANSACTION OVERVIEW:', '').trim())}
       </div>`;
     }
-    else if (section.includes('NETWORK DETAILS:')) {
+    else if (trimmedSection.includes('NETWORK DETAILS:')) {
       formattedContent += `<div class="bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl p-6 mb-4 hover:shadow-xl transition-all duration-300">
         <h3 class="flex items-center text-lg font-semibold text-gray-900 mb-4">
           <span class="mr-3 bg-blue-100 p-2 rounded-xl">🌐</span>
           <span>Network Details</span>
         </h3>
-        ${formatList(section.replace('NETWORK DETAILS:', '').trim())}
+        ${formatList(trimmedSection.replace('NETWORK DETAILS:', '').trim())}
       </div>`;
     }
-    else if (section.includes('TRANSFER ANALYSIS:')) {
+    else if (trimmedSection.includes('TRANSFER ANALYSIS:')) {
       formattedContent += `<div class="bg-white/80 backdrop-blur-sm border border-purple-100 rounded-2xl p-6 mb-4 hover:shadow-xl transition-all duration-300">
         <h3 class="flex items-center text-lg font-semibold text-gray-900 mb-4">
           <span class="mr-3 bg-purple-100 p-2 rounded-xl">↔️</span>
           <span>Transfer Analysis</span>
         </h3>
-        ${formatTransferSection(section.replace('TRANSFER ANALYSIS:', '').trim())}
+        ${formatTransferSection(trimmedSection.replace('TRANSFER ANALYSIS:', '').trim())}
       </div>`;
     }
-    else if (section.includes('DEX INTERACTIONS:')) {
+    else if (trimmedSection.includes('DEX INTERACTIONS:')) {
       formattedContent += `<div class="bg-white/80 backdrop-blur-sm border border-orange-100 rounded-2xl p-6 mb-4 hover:shadow-xl transition-all duration-300">
         <h3 class="flex items-center text-lg font-semibold text-gray-900 mb-4">
           <span class="mr-3 bg-orange-100 p-2 rounded-xl">🔄</span>
           <span>DEX Interactions</span>
         </h3>
-        ${formatList(section.replace('DEX INTERACTIONS:', '').trim())}
+        ${formatList(trimmedSection.replace('DEX INTERACTIONS:', '').trim())}
       </div>`;
     }
-    else if (section.includes('CONTRACT INTERACTIONS:')) {
+    else if (trimmedSection.includes('CONTRACT INTERACTIONS:')) {
       formattedContent += `<div class="bg-white/80 backdrop-blur-sm border border-yellow-100 rounded-2xl p-6 mb-4 hover:shadow-xl transition-all duration-300">
         <h3 class="flex items-center text-lg font-semibold text-gray-900 mb-4">
           <span class="mr-3 bg-yellow-100 p-2 rounded-xl">📝</span>
           <span>Contract Interactions</span>
         </h3>
-        ${formatList(section.replace('CONTRACT INTERACTIONS:', '').trim())}
+        ${formatList(trimmedSection.replace('CONTRACT INTERACTIONS:', '').trim())}
       </div>`;
     }
-    else if (section.includes('COST ANALYSIS:')) {
+    else if (trimmedSection.includes('COST ANALYSIS:')) {
       formattedContent += `<div class="bg-white/80 backdrop-blur-sm border border-green-100 rounded-2xl p-6 mb-4 hover:shadow-xl transition-all duration-300">
         <h3 class="flex items-center text-lg font-semibold text-gray-900 mb-4">
           <span class="mr-3 bg-green-100 p-2 rounded-xl">⛽</span>
           <span>Cost Analysis</span>
         </h3>
-        ${formatList(section.replace('COST ANALYSIS:', '').trim())}
+        ${formatList(trimmedSection.replace('COST ANALYSIS:', '').trim())}
       </div>`;
     }
-    else if (section.includes('SECURITY ASSESSMENT:')) {
+    else if (trimmedSection.includes('SECURITY ASSESSMENT:')) {
       formattedContent += `<div class="bg-white/80 backdrop-blur-sm border border-red-100 rounded-2xl p-6 mb-4 hover:shadow-xl transition-all duration-300">
         <h3 class="flex items-center text-lg font-semibold text-gray-900 mb-4">
           <span class="mr-3 bg-red-100 p-2 rounded-xl">🛡️</span>
           <span>Security Assessment</span>
-          ${extractRiskBadge(section)}
+          ${extractRiskBadge(trimmedSection)}
         </h3>
-        ${formatList(section.replace('SECURITY ASSESSMENT:', '').trim())}
+        ${formatList(trimmedSection.replace('SECURITY ASSESSMENT:', '').trim())}
       </div>`;
     }
-    else if (section.includes('ADDITIONAL INSIGHTS:')) {
+    else if (trimmedSection.includes('ADDITIONAL INSIGHTS:')) {
       formattedContent += `<div class="bg-white/80 backdrop-blur-sm border border-gray-100 rounded-2xl p-6 mb-4 hover:shadow-xl transition-all duration-300">
         <h3 class="flex items-center text-lg font-semibold text-gray-900 mb-4">
           <span class="mr-3 bg-gray-100 p-2 rounded-xl">💡</span>
           <span>Additional Insights</span>
         </h3>
-        ${formatList(section.replace('ADDITIONAL INSIGHTS:', '').trim())}
+        ${formatList(trimmedSection.replace('ADDITIONAL INSIGHTS:', '').trim())}
       </div>`;
     }
-     // Check for Mermaid diagram (e.g., "graph TD;")
-     else if (section.includes('graph TD;') || section.includes('graph LR;') || section.includes('sequenceDiagram')) {
-      formattedContent += `<div class="mermaid">${section}</div>`;
+    else if (trimmedSection.includes('graph TD;') || trimmedSection.includes('graph LR;') || trimmedSection.includes('sequenceDiagram')) {
+      formattedContent += `<div class="mermaid">${trimmedSection}</div>`;
     }
   });
   

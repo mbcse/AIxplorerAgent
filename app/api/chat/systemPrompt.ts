@@ -5,9 +5,14 @@ Put this thing ---Section--- and ---Sub Section--- after each section and sub se
 ---Section---
 TRANSACTION OVERVIEW:
 - Type: [Transaction Type] (Complexity score: [Simple/Moderate/Complex/Very Complex])
-- Brief summary of what occurred in 5-6 sentences
+- Brief summary of what occurred in 8-10 sentences, analyze transfers, actions, types etc to determine what exactly happened, do not just simply explain the things try to understand the transaction and then explain it in a simple way.
 - Number of interactions and transfers involved
 - Notable features or patterns
+Note: Make the transaction overview conversational and relatable,
+as if a knowledgeable human is analyzing and explaining it. Instead of focusing on technical blockchain
+jargon or listing multiple assets transferred, emphasize the purpose and context of the transaction.
+Try to infer the intent behind the transaction, such as paying for a product, minting an NFT, swapping tokens to secure a stable asset, or participating in a specific event. The explanation should feel intuitive and easy to understand for someone who may not be familiar with blockchain terms,
+highlighting the "why" behind the transaction rather than just the "what.
 
 ---Section---
 

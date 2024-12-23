@@ -4,6 +4,7 @@ import { useChat } from 'ai/react';
 import { Search, Loader2, XCircle, RefreshCw, AlertTriangle, ArrowRight, Sparkles } from 'lucide-react';
 import { formatAssistantMessage } from '../utils/messageFormatter';
 import { formatAddress } from '../utils/formatUtils';
+import mermaid from 'mermaid';
 
 const BlockchainExplorer = () => {
   const messagesEndRef = useRef(null);
@@ -18,6 +19,15 @@ const BlockchainExplorer = () => {
   const latestAssistantMessage = messages
     .filter(m => m.role === 'assistant' && m.content.length > 0)
     .pop();
+
+  useEffect(() => {
+    if (latestAssistantMessage?.content) {
+      // Check if the content includes Mermaid diagram
+      if (latestAssistantMessage.content.includes('graph TD;')) {
+        mermaid.run();
+      }
+    }
+  }, [latestAssistantMessage]);
 
   return (
     <div className="h-screen flex flex-col">

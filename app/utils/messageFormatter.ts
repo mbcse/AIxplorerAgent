@@ -139,6 +139,10 @@ export const formatAssistantMessage = (content: string): string => {
         ${formatList(section.replace('ADDITIONAL INSIGHTS:', '').trim())}
       </div>`;
     }
+     // Check for Mermaid diagram (e.g., "graph TD;")
+     else if (section.includes('graph TD;') || section.includes('graph LR;') || section.includes('sequenceDiagram')) {
+      formattedContent += `<div class="mermaid">${section}</div>`;
+    }
   });
   
   return formattedContent || `<div class="text-gray-700 whitespace-pre-wrap">${content}</div>`;

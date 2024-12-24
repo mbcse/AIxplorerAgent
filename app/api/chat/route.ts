@@ -11,7 +11,12 @@ import { TokenMetadataManager } from './helpers/tokensMetadataManager';
 import { TRANSFERS } from './types';
 import { classifyAndExtractEvents } from './helpers/eventsProcessor';
 
-
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",  // Allow requests from any origin for development
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, x-api-key",
+  "Access-Control-Max-Age": "86400", // Cache preflight response for 24 hours
+};
 
 // Transaction analysis
 async function analyzeTransaction(txHash: string, chainId: number) {
@@ -243,10 +248,14 @@ export async function POST(request: NextRequest) {
     console.error('API Error:', error);
     return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json', corsHeaders },
     });
   }
 }
 
 export const runtime = 'edge';
 export const maxDuration = 15;;
+
+export async function OPTIONS(req) {
+  return new Response(null, { status: 204, headers: corsHeaders });
+}

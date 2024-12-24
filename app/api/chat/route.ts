@@ -243,7 +243,15 @@ export async function POST(request: NextRequest) {
       maxSteps: 5,
     });
 
-    return result.toDataStreamResponse();
+    const response = result.toDataStreamResponse();
+    const headersObject = Object.fromEntries(response.headers.entries());
+    return new Response(response.body, {
+      status: response.status,
+      headers: {
+        ...headersObject,
+        ...corsHeaders
+      }
+    });
   } catch (error) {
     console.error('API Error:', error);
     return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
